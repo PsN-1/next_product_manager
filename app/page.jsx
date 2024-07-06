@@ -24,10 +24,10 @@ export default function HomePage() {
 
   async function getProducts(page = 1) {
     setIsLoading(true);
-    const from = (page - 1) * itemsPerPage;
-    const to = from + itemsPerPage - 1;
 
-    const response = await fetch(`/api/products?from=${from}&to=${to}`);
+    const response = await fetch(
+      `/api/products?page=${page}&itemsPerPage=${itemsPerPage}`,
+    );
     const { data, count } = await response.json();
     setProducts(data || []);
     setTotalCount(count);
@@ -43,13 +43,14 @@ export default function HomePage() {
     const columnName = Object.keys(tabs).find(
       (key) => tabs[key] === selectedTab,
     );
-    const products = await getProductsFiltered({
-      searchText,
-      columnName,
-      itemsPerPage,
-    });
-    setProducts(products.data);
-    setTotalCount(products.count);
+
+    const response = await fetch(
+      `/api/products?searchText=${searchText}&columnName=${columnName}&itemsPerPage=${itemsPerPage}`,
+    );
+    const { data, count } = await response.json();
+
+    setProducts(data);
+    setTotalCount(count);
     setIsLoading(false);
   };
 
@@ -133,77 +134,4 @@ export default function HomePage() {
       </div>
     </>
   );
-}
-
-async function getProductsFiltered({
-  searchText,
-  columnName,
-  page = 1,
-  itemsPerPage,
-}) {
-  const from = (page - 1) * itemsPerPage;
-  const to = from + itemsPerPage - 1;
-
-  if (!searchText || searchText === "") {
-    const { data, count, error } = await supabase
-      .from("Products")
-      .select("*", { count: "exact" })
-      .range(from, to);
-    if (error) {
-      console.error("Error fetching products:", error);
-      return { data: [], count: 0 };
-    }
-    return { data, count };
-  }
-
-  if (columnName === "box") {
-    const { data, count, error } = await supabase
-      .from("Products")
-      .select("*", { count: "exact" })
-      .eq("box", searchText)
-      .range(from, to);
-    if (error) {
-      console.error("Error searching products by box:", error);
-      return { data: [], count: 0 };
-    }
-    return { data, count };
-  }
-
-  if (columnName === "logs") {
-    const { productData, productError } = await supabase
-      .from("Logs")
-      .select("product_id")
-      .ilike("date", `%${searchText}%`);
-
-    if (error) {
-      console.error("Error0 searching products by logs:", productError);
-      return { data: [], count: 0 };
-    }
-
-    const productIds = productData.map((log) => log.product_id);
-    const { data, count, error } = await supabase
-      .from("Products")
-      .select("*", { count: "exact" })
-      .in("id", productIds)
-      .range(from, to);
-
-    if (error) {
-      console.error("Error1 searching products by logs:", error);
-      return { data: [], count: 0 };
-    }
-
-    return { data, count };
-  }
-
-  const { data, count, error } = await supabase
-    .from("Products")
-    .select("*", { count: "exact" })
-    .ilike(columnName, `%${searchText}%`)
-    .range(from, to);
-  if (error) {
-    console.error("Error searching products:", error);
-    return { data: [], count: 0 };
-  }
-
-  return { data, count };
 }

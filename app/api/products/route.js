@@ -10,16 +10,73 @@ export async function GET(request) {
   }
 
   const searchParams = request.nextUrl.searchParams;
-  const from = searchParams.get("from") || 0;
-  const to = searchParams.get("to") || 19;
+  const searchText = searchParams.get("searchText");
+  const columnName = searchParams.get("columnName");
+  const itemsPerPage = searchParams.get("itemsPerPage");
+  const page = searchParams.get("page") || 1;
 
-  const { data, error, count } = await supabase
+  const from = (page - 1) * itemsPerPage;
+  const to = from + itemsPerPage - 1;
+
+  if (!searchText || searchText === "") {
+    const { data, count, error } = await supabase
+      .from("Products")
+      .select("*", { count: "exact" })
+      .range(from, to);
+    if (error) {
+      console.error("Error fetching products:", error);
+      return NextResponse.json({ data: [], count: 0 }, { status: 200 });
+    }
+    return NextResponse.json({ data, count }, { status: 200 });
+  }
+
+  if (columnName === "box") {
+    const { data, count, error } = await supabase
+      .from("Products")
+      .select("*", { count: "exact" })
+      .eq("box", searchText)
+      .range(from, to);
+    if (error) {
+      console.error("Error searching products by box:", error);
+      return NextResponse.json({ data: [], count: 0 }, { status: 200 });
+    }
+    return NextResponse.json({ data, count }, { status: 200 });
+  }
+
+  if (columnName === "logs") {
+    const { productData, productError } = await supabase
+      .from("Logs")
+      .select("product_id")
+      .ilike("date", `%${searchText}%`);
+
+    if (error) {
+      console.error("Error0 searching products by logs:", productError);
+      return NextResponse.json({ data: [], count: 0 }, { status: 200 });
+    }
+
+    const productIds = productData.map((log) => log.product_id);
+    const { data, count, error } = await supabase
+      .from("Products")
+      .select("*", { count: "exact" })
+      .in("id", productIds)
+      .range(from, to);
+
+    if (error) {
+      console.error("Error1 searching products by logs:", error);
+      return NextResponse.json({ data: [], count: 0 }, { status: 200 });
+    }
+
+    return NextResponse.json({ data, count }, { status: 200 });
+  }
+
+  const { data, count, error } = await supabase
     .from("Products")
     .select("*", { count: "exact" })
+    .ilike(columnName, `%${searchText}%`)
     .range(from, to);
-
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error searching products:", error);
+    return NextResponse.json({ data: [], count: 0 }, { status: 200 });
   }
 
   return NextResponse.json({ data, count }, { status: 200 });
