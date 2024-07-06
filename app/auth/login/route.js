@@ -4,8 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 
 export async function POST(request) {
   const supabase = createClient();
-  const requestUrl = new URL(request.url);
-  const origin = requestUrl.origin;
   const { email, password } = await request.json();
   const { error, data } = await supabase.auth.signInWithPassword({
     email,

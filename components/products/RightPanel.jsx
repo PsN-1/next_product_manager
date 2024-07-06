@@ -5,8 +5,7 @@ import { classNames } from "../../utils/index";
 import PropTypes from "prop-types";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { SearchBar } from "../SearchBar.jsx";
-import { LoadingSpinner } from "../LoadingSpinner.jsx";
-import { createClient } from "../../utils/supabase/client";
+import { LoadingSpinner } from "@/components";
 
 export function RightPanel({ open, setOpen, onSelectedProductName }) {
   const [productNames, setProductNames] = useState([]);
@@ -18,24 +17,19 @@ export function RightPanel({ open, setOpen, onSelectedProductName }) {
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState("");
 
-  // const supabase = createClient();
-
   const handleSearch = async ({ searchText, page = 1 }) => {
     setCurrentPage(1);
     setSearch(searchText);
     await doSearch({ searchText, page });
   };
 
-  const doSearch = async ({ searchText: query, page = 1 }) => {
+  const doSearch = async ({ searchText, page = 1 }) => {
     setIsLoading(true);
-    const from = (page - 1) * itemsPerPage;
-    const to = from + itemsPerPage - 1;
 
-    const { data, count } = await supabase
-      .from("ProductsList")
-      .select("*", { count: "exact" })
-      .ilike("name", `%${query}%`)
-      .range(from, to);
+    const response = await fetch(
+      `/api/productNames?searchText=${searchText}&itemsPerPage=${itemsPerPage}&page=${page}`,
+    );
+    const { data, count } = await response.json();
 
     setProductNames(data);
     setTotalCount(count);
@@ -45,7 +39,16 @@ export function RightPanel({ open, setOpen, onSelectedProductName }) {
   const saveNewProductName = async () => {
     if (!newProductName) return;
     setIsLoading(true);
-    await supabase.from("ProductsList").insert({ name: newProductName });
+    const response = await fetch("/api/productNames", {
+      method: "POST",
+      body: JSON.stringify({ name: newProductName }),
+    });
+    if (!response.ok) {
+      console.error("Error creating product:", response.statusText);
+      setIsLoading(false);
+      return;
+    }
+
     const newProduct = newProductName;
     setNewProductName("");
     setIsLoading(false);
@@ -136,7 +139,9 @@ export function RightPanel({ open, setOpen, onSelectedProductName }) {
                           onClick={() => onSelectedProductName(product.name)}
                           className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                         >
-                          <span className="line-clamp-1">{product.name}</span>
+                          <span className="line-clamp-1 text-left">
+                            {product.name}
+                          </span>
                         </button>
                       ))}
 
