@@ -8,37 +8,59 @@ export const ProductDetail = ({ id }) => {
   const [logs, setLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleResponse = (data, error, isProduct) => {
-    if (error) {
-      return;
-    }
+  const fetchProduct = async (id) => {
+    try {
+      const response = await fetch(`/api/products/${id}`);
+      const { data, error } = await response.json();
 
-    if (data) {
-      isProduct ? setProduct(data[0]) : setLogs(data.reverse());
+      if (error) {
+        throw new Error(error);
+      }
+
+      return data[0];
+    } catch (err) {
+      console.error("Failed to fetch product:", err);
+      throw err;
+    }
+  };
+
+  const fetchLogs = async (id) => {
+    try {
+      const response = await fetch(`/api/logs/${id}`);
+      const { data, error } = await response.json();
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      return data.reverse();
+    } catch (err) {
+      console.error("Failed to fetch logs:", err);
+      throw err;
     }
   };
 
   useEffect(() => {
-    scrollToTop();
-    setIsLoading(true);
-    async function fetchProduct() {
-      const response = await fetch(`/api/products/${id}`);
-      const { data, error } = await response.json();
+    const loadData = async () => {
+      scrollToTop();
+      setIsLoading(true);
 
-      handleResponse(data, error, true);
-    }
+      try {
+        const [productData, logsData] = await Promise.all([
+          fetchProduct(id),
+          fetchLogs(id),
+        ]);
+        setProduct(productData);
+        setLogs(logsData);
+      } catch (err) {
+        // Handle errors if necessary
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    async function fetchLogs() {
-      const response = await fetch(`/api/logs/${id}`);
-      const { data, error } = await response.json();
-
-      handleResponse(data, error, false);
-    }
-
-    fetchProduct().then();
-    fetchLogs().then();
-    setIsLoading(false);
-  }, []);
+    loadData();
+  }, [id]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -105,7 +127,6 @@ export const ProductDetail = ({ id }) => {
       }
     }
     // if new price add log
-    //
 
     if (updatedProduct.price !== product.price) {
       updatedProduct.lastPrice = getFormattedDate();
