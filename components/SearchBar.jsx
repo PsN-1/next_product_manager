@@ -2,7 +2,7 @@
 
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid/index.js";
 import PropTypes from "prop-types";
-import { BlueButton } from "./Buttons/BlueButton.jsx";
+import { BlueButton } from "./buttons/BlueButton.jsx";
 import { useEffect, useState } from "react";
 import { classNames } from "../utils/index";
 

@@ -4,13 +4,10 @@ import PropTypes from "prop-types";
 import { classNames, paths } from "../../utils/index";
 import { RightPanel } from "./RightPanel.jsx";
 import { useEffect, useState } from "react";
-import { MoveBoxDialog } from "../Dialogs/InputDialog.jsx";
-import { AlertDialog } from "../Dialogs/AlertDialog.jsx";
-import { HistoryLogs } from "./HistoryLogs.jsx";
+import { AlertDialog, HistoryLogs, MoveBoxDialog } from "@/components";
 import { ProductField } from "./ProductField.jsx";
 import { ImageField } from "./ImageField.jsx";
 import { redirect } from "next/navigation";
-import { NavigationBar } from "../NavigationBar";
 
 export const ProductForm = ({
   product,
