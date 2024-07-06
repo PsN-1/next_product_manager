@@ -10,10 +10,11 @@ import {
   Transition,
 } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline/index.js";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import PropTypes from "prop-types";
-import { classNames, K, paths } from "../utils";
+import { classNames, K, paths } from "@/utils";
 import { HomeIcon, UserIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
 
 const userNavigation = [
   { name: "Your Profile", href: "#" },
@@ -21,15 +22,39 @@ const userNavigation = [
   { name: "Sign out", href: "#" },
 ];
 
-export const NavigationBar = ({ username }) => {
+export const NavigationBar = () => {
+  const [username, setUsername] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const response = await fetch("/auth/user");
+      const { user } = await response.json();
+
+      if (!user) {
+        router.replace(paths.login);
+      }
+
+      setUsername(user.email);
+    };
+
+    getUser().then();
+  }, []);
+
   const handleClick = (e) => {
     e.preventDefault();
-    redirect(paths.home);
+    router.push(paths.home);
   };
 
   const handleIconClick = async (name) => {
     if (name === "Sign out") {
-      // await supabase.auth.signOut();
+      const response = await fetch("/auth/logout");
+      const { error } = await response.json();
+      if (error) {
+        console.log(error);
+      } else {
+        router.replace(paths.login);
+      }
     }
   };
 

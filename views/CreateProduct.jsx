@@ -1,9 +1,6 @@
-import { ProductForm } from "../../product-manager-web/src/Components";
-import {
-  getFormattedDate,
-  paths,
-  supabase,
-} from "../../product-manager-web/src/Util";
+"use client";
+import { ProductForm } from "@/components";
+import { getFormattedDate, paths } from "@/utils";
 import { useState } from "react";
 
 export const CreateProduct = () => {
