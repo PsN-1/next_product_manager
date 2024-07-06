@@ -70,7 +70,7 @@ export const updateSession = async (request: NextRequest) => {
 
   const isNotLoginAttempt =
     request.nextUrl.pathname !== "/login" &&
-    request.nextUrl.pathname !== "/api/login";
+    request.nextUrl.pathname !== "/auth/login";
 
   if (!user && isNotLoginAttempt) {
     return NextResponse.redirect(new URL("/login", request.url));

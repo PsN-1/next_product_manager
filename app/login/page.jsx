@@ -16,7 +16,7 @@ export default function LoginPage() {
     setLoading(true);
     const formData = new FormData(e.currentTarget);
 
-    const response = await fetch("/api/login", {
+    const response = await fetch("/auth/login", {
       method: "POST",
       body: JSON.stringify({
         email: formData.get("email"),
