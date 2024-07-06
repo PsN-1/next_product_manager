@@ -6,8 +6,12 @@ import {
   ProductCard,
   SearchBar,
 } from "@/components/";
+import { useRouter } from "next/navigation";
+import { paths } from "@/utils";
 
 export default function HomePage() {
+  const router = useRouter();
+
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,7 +84,7 @@ export default function HomePage() {
             </div>
             <div className="text-right">
               <BlueButton
-                // onClick={() => navigate(paths.createProduct)}
+                onClick={() => router.push(paths.createProduct)}
                 text="Novo produto"
               />
             </div>
