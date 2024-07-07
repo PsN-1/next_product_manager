@@ -1,7 +1,7 @@
 "use server";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import LogService from "@/services/LogService";
+import LogService from "@/server/services/LogService";
 
 export async function GET(request, { params }) {
   const supabase = createClient();

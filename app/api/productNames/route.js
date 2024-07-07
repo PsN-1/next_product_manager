@@ -1,7 +1,7 @@
 "use server";
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
-import ProductListService from "@/services/ProductListService";
+import ProductListService from "@/server/services/ProductListService";
 
 export async function GET(request) {
   const supabase = createClient();

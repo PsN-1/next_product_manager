@@ -1,6 +1,8 @@
-export default class ProductListService {
-  constructor(supabase) {
-    this.supabase = supabase;
+import { createClient } from "@/utils/supabase/server";
+
+export default class ProductListRepository {
+  constructor() {
+    this.supabase = createClient();
   }
 
   async getProductsList({ searchText, itemsPerPage, page }) {

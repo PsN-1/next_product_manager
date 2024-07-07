@@ -1,6 +1,8 @@
-export default class LogService {
-  constructor(supabase) {
-    this.supabase = supabase;
+import { createClient } from "@/utils/supabase/server";
+
+export default class LogRepository {
+  constructor() {
+    this.supabase = createClient();
   }
 
   async getLogsByProductId(productId) {

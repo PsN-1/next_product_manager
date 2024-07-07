@@ -1,25 +1,8 @@
-export default class ProductService {
-  constructor(supabase) {
-    this.supabase = supabase;
-  }
+import { createClient } from "@/utils/supabase/server";
 
-  async getProducts({ searchText, columnName, itemsPerPage, page }) {
-    const from = (page - 1) * itemsPerPage;
-    const to = from + itemsPerPage - 1;
-
-    if (!searchText || searchText === "") {
-      return this.fetchProducts(from, to);
-    }
-
-    if (columnName === "box") {
-      return this.searchProductsByBox(searchText, from, to);
-    }
-
-    if (columnName === "logs") {
-      return this.searchProductsByLogs(searchText, from, to);
-    }
-
-    return this.searchProductsByColumn(columnName, searchText, from, to);
+export default class ProductRepository {
+  constructor() {
+    this.supabase = createClient();
   }
 
   async fetchProducts(from, to) {
@@ -92,7 +75,7 @@ export default class ProductService {
     return { data: { data, count }, status: 200 };
   }
 
-  async getProductById(id) {
+  async fetchProductById(id) {
     const { data, error } = await this.supabase
       .from("Products")
       .select("*")
