@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { AlertDialog, HistoryLogs, MoveBoxDialog } from "@/components";
 import { ProductField } from "./ProductField.jsx";
 import { ImageField } from "./ImageField.jsx";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export const ProductForm = ({
   product,
@@ -17,6 +17,8 @@ export const ProductForm = ({
   onMoveBox,
   onDeleteProduct,
 }) => {
+  const router = useRouter();
+
   const [openSearch, setOpenSearch] = useState(false);
   const [openMoveBox, setOpenMoveBox] = useState(false);
   const [openConfirmMoveBox, setOpenConformMoveBox] = useState(false);
@@ -286,7 +288,7 @@ export const ProductForm = ({
                 <div className="mt-6 justify-end items-center flex">
                   <div className="flex justify-end gap-x-6">
                     <button
-                      onClick={() => redirect(paths.home)}
+                      onClick={() => router.push(paths.home)}
                       type="button"
                       className="text-sm font-semibold leading-6 text-gray-900"
                     >

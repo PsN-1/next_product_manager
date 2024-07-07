@@ -2,9 +2,11 @@
 import { ProductForm } from "@/components";
 import { getFormattedDate, paths } from "@/utils";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const CreateProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const createNewProduct = async ({ updatedProduct }) => {
     setIsLoading(true);
@@ -53,7 +55,7 @@ export const CreateProduct = () => {
     }
 
     setIsLoading(false);
-    navigate(paths.home);
+    router.push(paths.home);
   };
 
   const handleUploadPhoto = async ({ newPhoto, userId }) => {
