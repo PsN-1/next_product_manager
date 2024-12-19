@@ -51,6 +51,24 @@ export const ProductForm = ({
 
   return (
     <>
+      <head>
+        <title>{product.product}</title>
+        <meta name="description" content={`${editedProduct.description}`} />
+
+        <meta property="og:title" content={`${editedProduct.product}`} />
+        <meta
+          property="og:description"
+          content={`${editedProduct.description}`}
+        />
+        <meta property="og:image" content={`${editedProduct.photo}`} />
+        <meta
+          property="og:url"
+          content={`https://pm2.pedrosn.com/produto/${editedProduct.id}`}
+        />
+        <meta property="og:type" content="product" />
+        <meta property="product:availability" content="in stock" />
+      </head>
+
       <MoveBoxDialog
         open={openMoveBox}
         setOpen={setOpenMoveBox}

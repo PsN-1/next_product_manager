@@ -13,8 +13,8 @@ export async function GET(request) {
 
   const searchParams = request.nextUrl.searchParams;
   const searchText = searchParams.get("searchText");
-  const itemsPerPage = parseInt(searchParams.get("itemsPerPage"), 10);
-  const page = parseInt(searchParams.get("page"), 10) || 1;
+  const itemsPerPage = Number.parseInt(searchParams.get("itemsPerPage"), 10);
+  const page = Number.parseInt(searchParams.get("page"), 10) || 1;
 
   const productListService = new ProductListService(supabase);
   const response = await productListService.getProductsList({
